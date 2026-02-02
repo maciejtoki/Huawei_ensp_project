@@ -1,0 +1,79 @@
+<AR4>display current-configuration 
+[V200R003C00]
+#
+ sysname AR4
+#
+ snmp-agent local-engineid 800007DB03000000000000
+ snmp-agent 
+#
+ clock timezone China-Standard-Time minus 08:00:00
+#
+portal local-server load flash:/portalpage.zip
+#
+ drop illegal-mac alarm
+#
+ipv6 
+#
+vlan batch 273 to 274 327
+#
+ wlan ac-global carrier id other ac id 0
+#
+ set cpu-usage threshold 80 restore 75
+#
+acl number 2000  
+ rule 5 permit source 192.168.30.0 0.0.0.255 
+#
+aaa 
+ authentication-scheme default
+ authorization-scheme default
+ accounting-scheme default
+ domain default 
+ domain default_admin 
+ local-user admin password cipher %$%$K8m.Nt84DZ}e#<0`8bmE3Uw}%$%$
+ local-user admin service-type http
+#
+firewall zone Local
+ priority 15
+#
+interface GigabitEthernet0/0/0
+ ipv6 enable 
+ ip address 192.168.30.254 255.255.255.0 
+ ipv6 address 192:168:30::254/64 
+#
+interface GigabitEthernet0/0/0.274
+#
+interface GigabitEthernet0/0/1
+#
+interface GigabitEthernet0/0/2
+#
+interface GigabitEthernet0/0/2.273
+ dot1q termination vid 273
+ ip address 100.30.27.1 255.255.255.252 
+ nat outbound 2000
+#
+interface GigabitEthernet0/0/2.274
+ dot1q termination vid 274
+ ipv6 enable 
+ ipv6 address 2002:30:27::1/126 
+#
+interface GigabitEthernet0/0/2.327
+ dot1q termination vid 327
+ ipv6 enable 
+ ip address 10.30.27.1 255.255.255.252 
+ ipv6 address 2001:30:27::1/126 
+#
+interface NULL0
+#
+ip route-static 0.0.0.0 0.0.0.0 100.30.27.2
+#
+ipv6 route-static :: 0 2002:30:27::2 
+#
+user-interface con 0
+ authentication-mode password
+user-interface vty 0 4
+user-interface vty 16 20
+#
+wlan ac
+#
+return
+<AR4> 

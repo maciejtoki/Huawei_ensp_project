@@ -1,0 +1,126 @@
+<AR2>display current-configuration 
+[V200R003C00]
+#
+ sysname AR2
+#
+ board add 0/4 2FE 
+#
+ snmp-agent local-engineid 800007DB03000000000000
+ snmp-agent 
+#
+ clock timezone China-Standard-Time minus 08:00:00
+#
+portal local-server load flash:/portalpage.zip
+#
+ drop illegal-mac alarm
+#
+ipv6 
+#
+vlan batch 100 300 400
+#
+ wlan ac-global carrier id other ac id 0
+#
+ set cpu-usage threshold 80 restore 75
+#
+aaa 
+ authentication-scheme default
+ authorization-scheme default
+ accounting-scheme default
+ domain default 
+ domain default_admin 
+ local-user admin password cipher %$%$K8m.Nt84DZ}e#<0`8bmE3Uw}%$%$
+ local-user admin service-type http
+#
+ospfv3 1
+ router-id 2.2.2.2
+ default-route-advertise
+#
+firewall zone Local
+ priority 15
+#
+interface Ethernet4/0/0
+#
+interface Ethernet4/0/1
+#
+interface GigabitEthernet0/0/0
+#
+interface GigabitEthernet0/0/0.100
+ dot1q termination vid 100
+ ipv6 enable 
+#
+interface GigabitEthernet0/0/0.199
+#
+interface GigabitEthernet0/0/0.300
+ dot1q termination vid 300
+ ip address 100.40.15.1 255.255.255.252 
+#
+interface GigabitEthernet0/0/0.400
+ dot1q termination vid 400
+ ipv6 enable 
+ ipv6 address 2002:40:15::1/126 
+ ospfv3 1 area 0.0.0.0
+#
+interface GigabitEthernet0/0/1
+ ipv6 enable 
+ ip address 10.140.15.2 255.255.255.252 
+ ipv6 address 2001:140:15::2/126 
+ ospfv3 1 area 0.0.0.0
+#
+interface GigabitEthernet0/0/2
+ ipv6 enable 
+ ip address 10.150.17.1 255.255.255.252 
+ ipv6 address 2001:150:17::1/126 
+ ospfv3 1 area 0.0.0.0
+#
+interface NULL0
+#
+interface LoopBack0
+ ipv6 enable 
+ ip address 1.1.1.11 255.255.255.255 
+ ipv6 address 2001::11/128 
+ ospfv3 1 area 0.0.0.0
+#
+bgp 65100
+ router-id 1.1.1.11
+ peer 1.1.1.12 as-number 65100 
+ peer 1.1.1.12 connect-interface LoopBack0
+ peer 100.40.15.2 as-number 100.1 
+ peer 2001::12 as-number 65100 
+ peer 2001::12 connect-interface LoopBack0
+ peer 2001:40:15::2 as-number 100.1 
+ peer 2002:40:15::2 as-number 100.1 
+ #
+ ipv4-family unicast
+  undo synchronization
+  network 10.140.15.0 255.255.255.252 
+  network 10.150.17.0 255.255.255.252 
+  peer 1.1.1.12 enable
+  peer 100.40.15.2 enable
+ #
+ ipv6-family unicast
+  undo synchronization
+  peer 2001::12 enable
+  peer 2002:40:15::2 enable
+#
+ospf 1 router-id 2.2.2.2 
+ default-route-advertise
+ area 0.0.0.0 
+  network 1.1.1.11 0.0.0.0 
+  network 10.40.15.0 0.0.0.3 
+  network 10.140.15.0 0.0.0.3 
+  network 10.150.17.0 0.0.0.3 
+  network 100.40.15.0 0.0.0.3 
+#
+ip route-static 0.0.0.0 0.0.0.0 10.40.15.2
+#
+ipv6 route-static :: 0 2001:40:15::2 
+#
+user-interface con 0
+ authentication-mode password
+user-interface vty 0 4
+user-interface vty 16 20
+#
+wlan ac
+#
+return
+<AR2>

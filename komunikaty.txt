@@ -1,0 +1,63 @@
+BGP Peer is 2002:40:14::1,  remote AS 65100  
+	Type: EBGP link
+	BGP version 4, Remote router ID 0.0.0.0
+	Update-group ID: 0  
+	BGP current state: Active
+	BGP current event: ConnOpenFailed
+	BGP last state: Connect
+	BGP Peer Up count: 0
+	Configured: Connect-retry Time: 32 sec
+ Received: Total 0 messages
+		 Update messages 		0 
+		 Open messages 			0 
+		 KeepAlive messages 		0 
+		 Notification messages  	0 
+		 Refresh messages 		0
+ Sent: Total 0 messages
+		 Update messages 		0 
+		 Open messages 			0 
+		 KeepAlive messages 		0 
+		 Notification messages  	0 
+		 Refresh messages 		0
+ Authentication type configured: None
+ No keepalive received since peer has been configured
+ Minimum route advertisement interval is 30 seconds
+ Optional capabilities:
+ Route refresh capability has been enabled
+ 4-byte-as capability has been enabled
+ Connect-interface has been configured
+ Peer Preferred Value: 0
+ Routing policy configured:
+ No routing policy is configured
+
+	BGP Peer is 2002:40:15::1,  remote AS 65100  
+	Type: EBGP link
+	BGP version 4, Remote router ID 0.0.0.0
+	Update-group ID: 0  
+	BGP current state: Active
+	BGP current event: ConnOpenFailed
+	BGP last state: Connect
+	BGP Peer Up count: 0
+	Configured: Connect-retry Time: 32 sec
+ Received: Total 0 messages
+		 Update messages 		0 
+		 Open messages 			0 
+		 KeepAlive messages 		0 
+		 Notification messages  	0 
+		 Refresh messages 		0
+ Sent: Total 0 messages
+		 Update messages 		0 
+		 Open messages 			0 
+		 KeepAlive messages 		0 
+		 Notification messages  	0 
+		 Refresh messages 		0
+ Authentication type configured: None
+ No keepalive received since peer has been configured
+ Minimum route advertisement interval is 30 seconds
+ Optional capabilities:
+ Route refresh capability has been enabled
+ 4-byte-as capability has been enabled
+ Peer Preferred Value: 0
+ Routing policy configured:
+ No routing policy is configured
+[R4]

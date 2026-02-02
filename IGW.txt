@@ -1,0 +1,99 @@
+<IGW>display current-configuration 
+#
+sysname IGW
+#
+ipv6
+#
+aaa
+ authentication-scheme default
+ authorization-scheme default
+ accounting-scheme default
+ domain default
+ domain default_admin
+ local-user admin password cipher MRw:8["S7V939O4.`(ZG;<C#
+ local-user admin service-type http
+#
+firewall zone Local
+ priority 16
+#
+interface Ethernet0/0/0
+#
+interface Ethernet0/0/1
+#
+interface Serial0/0/0
+ link-protocol ppp
+#
+interface Serial0/0/1
+ link-protocol ppp
+#
+interface Serial0/0/2
+ link-protocol ppp
+#
+interface Serial0/0/3
+ link-protocol ppp
+#
+interface GigabitEthernet0/0/0
+#
+interface GigabitEthernet0/0/1
+#
+interface GigabitEthernet0/0/2
+ ipv6 enable
+ ip address 100.20.100.1 255.255.255.252
+ ipv6 address 2001:20:100::1/126
+#
+interface GigabitEthernet0/0/3
+#
+wlan
+#
+interface NULL0
+#
+interface LoopBack0
+ ip address 1.1.1.100 255.255.255.255
+#
+interface LoopBack100
+ ipv6 enable
+ ip address 100.0.0.100 255.255.255.255
+ ipv6 address 100::100/128
+#
+interface LoopBack200
+ ipv6 enable
+ ip address 100.0.0.200 255.255.255.255
+ ipv6 address 100::200/128
+#
+bgp 100.2
+ router-id 1.1.1.100
+ peer 100.20.100.2 as-number 100.1
+ peer 2001:20:100::2 as-number 100.1
+ #
+ ipv4-family unicast
+  undo synchronization
+  aggregate 100.0.0.0 255.255.0.0 detail-suppressed
+  network 100.0.0.100 255.255.255.255
+  network 100.0.0.200 255.255.255.255
+  peer 100.20.100.2 enable
+  peer 100.20.100.2 route-policy IGW-IPV4 export
+ #
+ ipv6-family unicast
+  undo synchronization
+  aggregate 100:: 64 detail-suppressed
+  network 100::100 128
+  network 100::200 128
+  peer 2001:20:100::2 enable
+  peer 2001:20:100::2 route-policy IGW-IPV6 export
+#
+route-policy IGW-IPV4 permit node 10
+ apply origin igp
+ apply community 100:4
+#
+route-policy IGW-IPV6 permit node 10
+ apply community 100:6
+#
+ip route-static 0.0.0.0 0.0.0.0 100.20.100.2
+ip route-static 100.30.27.0 255.255.255.252 GigabitEthernet0/0/2
+#
+user-interface con 0
+user-interface vty 0 4
+user-interface vty 16 20
+#
+return
+<IGW> 

@@ -1,0 +1,196 @@
+<CSW2>display current-configuration 
+#
+sysname CSW2
+#
+ipv6
+#
+vlan batch 10 40 110 120 130 140 310 1000 1517 1617
+vlan batch 2000 2021
+#
+stp instance 1 root secondary
+stp instance 2 root primary
+#
+cluster enable
+ntdp enable
+ndp enable
+#
+drop illegal-mac alarm
+#
+dhcp enable
+#
+diffserv domain default
+#
+stp region-configuration
+ region-name 1
+ instance 1 vlan 110 120 130 140
+ instance 2 vlan 10 40
+ active region-configuration
+#
+drop-profile default
+#
+ip pool vlan110
+ gateway-list 192.168.110.254
+ network 192.168.110.0 mask 255.255.255.0
+ excluded-ip-address 192.168.110.252 192.168.110.253
+#
+ip pool vlan120
+ gateway-list 192.168.120.254
+ network 192.168.120.0 mask 255.255.255.0
+ excluded-ip-address 192.168.120.252 192.168.120.253
+#
+ip pool vlan130
+ gateway-list 192.168.130.254
+ network 192.168.130.0 mask 255.255.255.0
+ excluded-ip-address 192.168.130.252 192.168.130.253
+#
+ip pool vlan140
+ gateway-list 192.168.140.254
+ network 192.168.140.0 mask 255.255.255.0
+ excluded-ip-address 192.168.140.252 192.168.140.253
+#
+aaa
+ authentication-scheme default
+ authorization-scheme default
+ accounting-scheme default
+ domain default
+ domain default_admin
+ local-user admin password simple admin
+ local-user admin service-type http
+#
+ospfv3 1
+ router-id 1.1.1.2
+#
+interface Vlanif1
+#
+interface Vlanif10
+ ip address 192.168.10.253 255.255.255.0
+ vrrp vrid 1 virtual-ip 192.168.10.254
+ vrrp vrid 1 priority 120
+ ospf enable 1 area 0.0.0.0
+#
+interface Vlanif40
+ ipv6 enable
+ ipv6 address 192:168:40::254/64
+ ospfv3 1 area 0.0.0.0
+#
+interface Vlanif110
+ ip address 192.168.110.253 255.255.255.0
+ dhcp select global
+#
+interface Vlanif120
+ ip address 192.168.120.253 255.255.255.0
+ dhcp select global
+#
+interface Vlanif130
+ ip address 192.168.130.253 255.255.255.0
+ dhcp select global
+#
+interface Vlanif140
+ ip address 192.168.140.253 255.255.255.0
+ dhcp select global
+#
+interface Vlanif310
+ ip address 10.100.31.253 255.255.255.0
+ vrrp vrid 2 virtual-ip 10.100.31.254
+#
+interface Vlanif1000
+ ip address 10.170.22.1 255.255.255.252
+#
+interface Vlanif1517
+ ipv6 enable
+ ip address 10.150.17.2 255.255.255.252
+ ipv6 address 2001:150:17::2/126
+ ospfv3 1 area 0.0.0.0
+#
+interface Vlanif1617
+ ipv6 enable
+ ip address 10.160.17.2 255.255.255.252
+ ipv6 address 2001:160:17::2/126
+ ospfv3 1 area 0.0.0.0
+#
+interface Vlanif2000
+ ip address 10.220.17.1 255.255.255.252
+#
+interface Vlanif2021
+ ip address 10.200.21.1 255.255.255.252
+#
+interface MEth0/0/1
+#
+interface GigabitEthernet0/0/1
+ port link-type trunk
+ port trunk allow-pass vlan 10 40 110 120 130 140 310 1617
+#
+interface GigabitEthernet0/0/2
+ port link-type access
+ port default vlan 1517
+#
+interface GigabitEthernet0/0/3
+#
+interface GigabitEthernet0/0/4
+ port link-type trunk
+ port trunk allow-pass vlan 10 40 110 120 130 140 310
+#
+interface GigabitEthernet0/0/5
+#
+interface GigabitEthernet0/0/6
+ port link-type trunk
+ port trunk allow-pass vlan 10 40 110 120 130 140 310
+#
+interface GigabitEthernet0/0/7
+ port link-type trunk
+ port trunk allow-pass vlan 1000 2000
+#
+interface GigabitEthernet0/0/8
+#
+interface GigabitEthernet0/0/9
+#
+interface GigabitEthernet0/0/10
+#
+interface GigabitEthernet0/0/11
+#
+interface GigabitEthernet0/0/12
+#
+interface GigabitEthernet0/0/13
+#
+interface GigabitEthernet0/0/14
+#
+interface GigabitEthernet0/0/15
+#
+interface GigabitEthernet0/0/16
+#
+interface GigabitEthernet0/0/17
+#
+interface GigabitEthernet0/0/18
+#
+interface GigabitEthernet0/0/19
+#
+interface GigabitEthernet0/0/20
+#
+interface GigabitEthernet0/0/21
+#
+interface GigabitEthernet0/0/22
+#
+interface GigabitEthernet0/0/23
+#
+interface GigabitEthernet0/0/24
+#
+interface NULL0
+#
+ospf 1 router-id 1.1.1.2
+ area 0.0.0.0
+  network 192.168.10.0 0.0.0.255
+  network 192.168.110.0 0.0.0.255
+  network 192.168.120.0 0.0.0.255
+  network 192.168.130.0 0.0.0.255
+  network 192.168.140.0 0.0.0.255
+  network 10.100.31.0 0.0.0.255
+  network 10.170.22.0 0.0.0.3
+  network 10.220.17.0 0.0.0.3
+  network 10.150.17.0 0.0.0.3
+  network 10.160.17.0 0.0.0.3
+#
+user-interface con 0
+user-interface vty 0 4
+#
+return
+<CSW2>

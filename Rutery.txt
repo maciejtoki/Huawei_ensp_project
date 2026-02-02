@@ -1,0 +1,859 @@
+[IGW]display current-configuration 
+#
+sysname IGW
+#
+ipv6
+#
+aaa
+ authentication-scheme default
+ authorization-scheme default
+ accounting-scheme default
+ domain default
+ domain default_admin
+ local-user admin password cipher f>Z}30S.qBECB7Ie7'/)%'s#
+ local-user admin service-type http
+#
+firewall zone Local
+ priority 16
+#
+interface Ethernet0/0/0
+#
+interface Ethernet0/0/1
+#
+interface Serial0/0/0
+ link-protocol ppp
+#
+interface Serial0/0/1
+ link-protocol ppp
+#
+interface Serial0/0/2
+ link-protocol ppp
+#
+interface Serial0/0/3
+ link-protocol ppp
+#
+interface GigabitEthernet0/0/0
+#
+interface GigabitEthernet0/0/1
+#
+interface GigabitEthernet0/0/2
+ ipv6 enable
+ ip address 100.20.100.1 255.255.255.252
+ ipv6 address 2001:20:100::1/126
+#
+interface GigabitEthernet0/0/3
+#
+wlan
+#
+interface NULL0
+#
+interface LoopBack0
+ ip address 1.1.1.100 255.255.255.255
+#
+interface LoopBack100
+ ipv6 enable
+ ip address 100.0.0.100 255.255.255.255
+ ipv6 address 100::100/128
+#
+interface LoopBack200
+ ipv6 enable
+ ip address 100.0.0.200 255.255.255.255
+ ipv6 address 100::200/128
+#
+bgp 100.2
+ router-id 1.1.1.100
+ peer 100.20.100.2 as-number 100.1
+ peer 2001:20:100::2 as-number 100.1
+ #
+ ipv4-family unicast
+  undo synchronization
+  aggregate 100.0.0.0 255.255.0.0 detail-suppressed
+  network 100.0.0.100 255.255.255.255
+  network 100.0.0.200 255.255.255.255
+  peer 100.20.100.2 enable
+  peer 100.20.100.2 route-policy IGW-IPV4 export
+ #
+ ipv6-family unicast
+  undo synchronization
+  aggregate 100:: 64 detail-suppressed
+  network 100::100 128
+  network 100::200 128
+  peer 2001:20:100::2 enable
+  peer 2001:20:100::2 route-policy IGW-IPV6 export
+#
+route-policy IGW-IPV4 permit node 10
+ apply origin igp
+ apply community 100:4
+#
+route-policy IGW-IPV6 permit node 10
+ apply community 100:6
+#
+user-interface con 0
+user-interface vty 0 4
+user-interface vty 16 20
+#
+return
+<R2>display current-configuration 
+#
+sysname R2
+#
+ipv6
+#
+ip vpn-instance DCI
+ ipv4-family
+  route-distinguisher 100:439
+  vpn-target 100:439 export-extcommunity
+  vpn-target 100:439 import-extcommunity
+#
+aaa
+ authentication-scheme default
+ authorization-scheme default
+ accounting-scheme default
+ domain default
+ domain default_admin
+ local-user admin password cipher *XEh22dHMOjKUGU-KkpB-V/#
+ local-user admin service-type http
+#
+isis 1
+ is-level level-2
+ cost-style wide
+ network-entity 49.0001.0010.0100.1002.00
+ is-name R2
+ #
+ ipv6 enable topology standard
+ #
+#
+firewall zone Local
+ priority 16
+#
+interface Ethernet0/0/0
+#
+interface Ethernet0/0/1
+#
+interface Serial0/0/0
+ link-protocol ppp
+#
+interface Serial0/0/1
+ link-protocol ppp
+#
+interface Serial0/0/2
+ link-protocol ppp
+#
+interface Serial0/0/3
+ link-protocol ppp
+#
+interface GigabitEthernet0/0/0
+ ipv6 enable
+ ip address 100.20.3.2 255.255.255.252
+ ipv6 address 2001:20:3::2/126
+ isis enable 1
+ isis ipv6 enable 1
+ isis authentication-mode md5 8^b{EW"Z<WN",HP~\'zPuZs#
+ isis cost 100
+#
+interface GigabitEthernet0/0/1
+ ipv6 enable
+ ip address 100.20.28.1 255.255.255.252
+ ipv6 address 2001:20:28::1/126
+ isis enable 1
+ isis ipv6 enable 1
+ isis authentication-mode md5 2nXDU^.}SON%vfR;:34J&ZN#
+ isis cost 100
+#
+interface GigabitEthernet0/0/2
+ ipv6 enable
+ ip address 100.20.100.2 255.255.255.252
+ ipv6 address 2001:20:100::2/126
+#
+interface GigabitEthernet0/0/3
+ ip binding vpn-instance DCI
+ ip address 10.20.12.1 255.255.255.252
+#
+wlan
+#
+interface NULL0
+#
+interface LoopBack0
+ ipv6 enable
+ ip address 1.1.1.2 255.255.255.255
+ ipv6 address 2001::2/128
+ isis enable 1
+ isis ipv6 enable 1
+#
+bgp 100.1
+ router-id 1.1.1.2
+ peer 1.1.1.1 as-number 100.1
+ peer 1.1.1.1 connect-interface LoopBack0
+ peer 1.1.1.3 as-number 100.1
+ peer 1.1.1.3 connect-interface LoopBack0
+ peer 1.1.1.4 as-number 100.1
+ peer 1.1.1.4 connect-interface LoopBack0
+ peer 100.20.100.1 as-number 100.2
+ peer 2001::3 as-number 100.1
+ peer 2001::3 connect-interface LoopBack0
+ peer 2001::4 as-number 100.1
+ peer 2001::4 connect-interface LoopBack0
+ peer 2001:20:100::1 as-number 100.2
+ #
+ ipv4-family unicast
+  undo synchronization
+  network 10.20.12.0 255.255.255.252
+  network 100.20.3.0 255.255.255.252
+  network 100.20.28.0 255.255.255.252
+  network 100.20.100.0 255.255.255.252
+  peer 1.1.1.1 enable
+  peer 1.1.1.3 enable
+  peer 1.1.1.4 enable
+  peer 100.20.100.1 enable
+  peer 100.20.100.1 route-policy R2-IPV4 import
+  peer 100.20.100.1 advertise-community
+  peer 100.20.100.1 keep-all-routes
+ #
+ ipv4-family multicast
+  undo synchronization
+ #
+ ipv6-family unicast
+  undo synchronization
+  network 2001:20:3:: 126
+  network 2001:20:28:: 126
+  network 2001:20:100:: 126
+  peer 2001::3 enable
+  peer 2001::4 enable
+  peer 2001:20:100::1 enable
+  peer 2001:20:100::1 route-policy R2-IPV6 import
+ #
+ ipv4-family vpnv4
+  policy vpn-target
+  peer 1.1.1.1 enable
+  peer 1.1.1.3 enable
+  peer 1.1.1.4 enable
+ #
+ ipv4-family vpn-instance DCI
+  peer 10.20.12.2 as-number 64520
+  peer 10.20.12.2 valid-ttl-hops 2
+#
+route-policy R2-IPV4 permit node 10
+ if-match ip-prefix IPV4-SUMMARY
+ if-match community-filter CF-IPV4
+ apply community 100:5 additive
+#
+route-policy R2-IPV4 permit node 20
+ if-match community-filter CF-IPV4
+#
+route-policy R2-IPV6 permit node 10
+ if-match ipv6 address prefix-list IPV6-SUMMARY
+ if-match community-filter CF-IPV6
+ apply community 100:7 additive
+#
+route-policy R2-IPV6 permit node 20
+ if-match community-filter CF-IPV6
+#
+ip ip-prefix IPV4-SUMMARY index 10 permit 100.0.0.0 16
+#
+ip community-filter basic CF-IPV4 permit 100:4
+ip community-filter basic CF-IPV6 permit 100:6
+#
+ip route-static 100.0.0.0 255.255.0.0 NULL0
+#
+ip ipv6-prefix IPV6-SUMMARY index 10 permit 100:: 64
+#
+user-interface con 0
+user-interface vty 0 4
+user-interface vty 16 20
+#
+return
+
+[R3]display current-configuration
+#
+sysname R3
+#
+ipv6
+#
+vlan batch 100 273 to 274 327
+#
+ip vpn-instance vpnv6
+ ipv6-family
+  route-distinguisher 100:1
+  vpn-target 100:1 export-extcommunity
+  vpn-target 100:1 import-extcommunity
+#
+mpls lsr-id 1.1.1.3
+mpls
+#
+mpls ldp
+#
+#
+aaa
+ authentication-scheme default
+ authorization-scheme default
+ accounting-scheme default
+ domain default
+ domain default_admin
+ local-user admin password cipher @1;D-USL^&:z9:%F`[a=wRY#
+ local-user admin service-type http
+#
+isis 1
+ is-level level-2
+ cost-style wide
+ network-entity 49.0001.0010.0100.1003.00
+ is-name R3
+ import-route isis 100 route-policy ISIS-100-TO-1
+ #
+ ipv6 enable topology standard
+ ipv6 import-route isis 100 route-policy ISISV6-100-TO-1
+ #
+#
+isis 100
+ is-level level-2
+ cost-style wide
+ network-entity 49.0100.0010.0100.1003.00
+ is-name R3
+ import-route isis 1 route-policy ISIS-1-TO-100
+ #
+ ipv6 enable topology standard
+ ipv6 import-route isis 1 route-policy ISISV6-1-TO-100
+ #
+#
+firewall zone Local
+ priority 16
+#
+interface Ethernet0/0/0
+#
+interface Ethernet0/0/1
+#
+interface Serial0/0/0
+ link-protocol ppp
+#
+interface Serial0/0/1
+ link-protocol ppp
+#
+interface Serial0/0/2
+ link-protocol ppp
+#
+interface Serial0/0/3
+ link-protocol ppp
+#
+interface GigabitEthernet0/0/0
+ ipv6 enable
+ ip address 100.20.3.1 255.255.255.252
+ ipv6 address 2001:20:3::1/126
+ isis enable 1
+ isis ipv6 enable 1
+ isis authentication-mode md5 p]VdA4\'s#A/!-@.Vp7.gS^#
+ isis cost 100
+#
+interface GigabitEthernet0/0/1
+ ipv6 enable
+ ip address 100.10.3.2 255.255.255.252
+ ipv6 address 2001:10:3::2/126
+ isis enable 100
+ isis ipv6 enable 100
+ isis authentication-mode md5 uCQPXq+qXMdlx3Fo4OG@7V/#
+ isis cost 10
+ mpls
+ mpls ldp
+#
+interface GigabitEthernet0/0/2
+ mpls
+ mpls ldp
+#
+interface GigabitEthernet0/0/2.273
+ vlan-type dot1q 273
+ ip address 100.30.27.2 255.255.255.252
+#
+interface GigabitEthernet0/0/2.274
+ vlan-type dot1q 274
+ ipv6 enable
+ ipv6 address 2002:30:27::2/126
+#
+interface GigabitEthernet0/0/2.327
+ vlan-type dot1q 327
+ ipv6 enable
+ ip address 10.30.27.2 255.255.255.252
+ ipv6 address 2001:30:27::2/126
+#
+interface GigabitEthernet0/0/3
+ ipv6 enable
+#
+interface GigabitEthernet0/0/3.1
+ vlan-type dot1q 1
+ ipv6 enable
+ ip address 100.30.4.1 255.255.255.252
+ ipv6 address 2001:30:4::1/126
+ isis enable 1
+ isis ipv6 enable 1
+ isis circuit-level level-2
+ isis authentication-mode md5 ,+vV6p3s>@V{0,NJ*6g6hU@#
+ isis cost 2000
+#
+interface GigabitEthernet0/0/3.15
+#
+interface GigabitEthernet0/0/3.100
+ vlan-type dot1q 100
+ ipv6 enable
+ ip address 100.4.3.1 255.255.255.252
+ ipv6 address 2001:40:3::1/126
+ isis enable 100
+ isis ipv6 enable 100
+ isis circuit-level level-2
+ isis authentication-mode md5 j@b*%}#'`)N%vfR;:34JmV*#
+ isis cost 10
+#
+wlan
+#
+interface NULL0
+#
+interface LoopBack0
+ ipv6 enable
+ ip address 1.1.1.3 255.255.255.255
+ ipv6 address 2001::3/128
+ isis enable 100
+ isis ipv6 enable 100
+#
+bgp 100.1
+ router-id 1.1.1.3
+ peer 1.1.1.1 as-number 100.1
+ peer 1.1.1.1 connect-interface LoopBack0
+ peer 1.1.1.2 as-number 100.1
+ peer 1.1.1.2 connect-interface LoopBack0
+ peer 1.1.1.4 as-number 100.1
+ peer 1.1.1.4 connect-interface LoopBack0
+ peer 1.1.1.28 as-number 100.1
+ peer 1.1.1.28 connect-interface LoopBack0
+ peer 2001::1 as-number 100.1
+ peer 2001::1 connect-interface LoopBack0
+ peer 2001::2 as-number 100.1
+ peer 2001::2 connect-interface LoopBack0
+ group vpnv6 internal
+ peer 2001::4 as-number 100.1
+ peer 2001::4 group vpnv6
+ peer 2001::4 connect-interface LoopBack0
+ peer 2001::28 as-number 100.1
+ peer 2001::28 group vpnv6
+ peer 2001::28 connect-interface LoopBack0
+ #
+ ipv4-family unicast
+  undo synchronization
+  reflector cluster-id 1.1.1.3
+  network 100.10.3.0 255.255.255.252
+  network 100.20.3.0 255.255.255.252
+  network 100.30.4.0 255.255.255.252
+  network 100.40.3.0 255.255.255.252
+  peer 1.1.1.1 enable
+  peer 1.1.1.1 reflect-client
+  peer 1.1.1.2 enable
+  peer 1.1.1.2 route-policy ONLY-SUMMARY-IPV4 import
+  peer 1.1.1.2 reflect-client
+  peer 1.1.1.4 enable
+  peer 1.1.1.4 reflect-client
+  peer 1.1.1.28 enable
+  peer 1.1.1.28 reflect-client
+  peer vpnv6 enable
+ #
+ ipv6-family unicast
+  undo synchronization
+  network 2001:10:3:: 126
+  network 2001:20:3:: 126
+  network 2001:30:4:: 126
+  network 2001:40:3:: 126
+  peer 2001::1 enable
+  peer 2001::1 reflect-client
+  peer 2001::2 enable
+  peer 2001::2 route-policy ONLY-SUMMARY-IPV6 import
+  peer 2001::2 reflect-client
+  peer 2001::4 enable
+  peer 2001::4 reflect-client
+  peer 2001::28 enable
+  peer 2001::28 reflect-client
+ #
+ ipv4-family vpnv4
+  policy vpn-target
+  peer 1.1.1.1 enable
+  peer 1.1.1.1 reflect-client
+  peer 1.1.1.2 enable
+  peer 1.1.1.2 reflect-client
+  peer 1.1.1.4 enable
+  peer 1.1.1.4 reflect-client
+  peer 1.1.1.28 enable
+ #
+ ipv6-family vpnv6
+  policy vpn-target
+  peer 1.1.1.4 enable
+  peer 1.1.1.28 enable
+#
+route-policy ISIS-1-TO-100 permit node 10
+ if-match ip-prefix LOOPBACK1V4
+ apply tag 1
+#
+route-policy ISIS-1-TO-100 deny node 20
+#
+route-policy ISIS-100-TO-1 deny node 5
+ if-match tag 1
+#
+route-policy ISIS-100-TO-1 permit node 10
+ if-match ip-prefix LOOPBACK100V4
+ apply tag 100
+#
+route-policy ISIS-100-TO-1 deny node 20
+#
+route-policy ISISV6-1-TO-100 permit node 10
+ if-match ipv6 address prefix-list LOOPBACK1V6
+ apply tag 1
+#
+route-policy ISISV6-1-TO-100 deny node 20
+#
+route-policy ISISV6-100-TO-1 deny node 5
+ if-match tag 1
+#
+route-policy ISISV6-100-TO-1 permit node 10
+ if-match ipv6 address prefix-list LOOPBACK100V6
+ apply tag 100
+#
+route-policy ISISV6-100-TO-1 deny node 20
+#
+route-policy ONLY-SUMMARY-IPV4 permit node 10
+ if-match community-filter ONLY-SUMMARY-IPV4
+#
+route-policy ONLY-SUMMARY-IPV6 permit node 10
+ if-match community-filter ONLY-SUMMARY-IPV6
+#
+ip ip-prefix LOOPBACK1V4 index 10 permit 1.1.1.2 32
+ip ip-prefix LOOPBACK1V4 index 20 permit 1.1.1.28 32
+ip ip-prefix LOOPBACK100V4 index 10 permit 1.1.1.1 32
+ip ip-prefix LOOPBACK100V4 index 20 permit 1.1.1.3 32
+ip ip-prefix LOOPBACK100V4 index 30 permit 1.1.1.4 32
+#
+ip community-filter basic ONLY-SUMMARY-IPV4 permit 100:5
+ip community-filter basic ONLY-SUMMARY-IPV6 permit 100:7
+#
+ip ipv6-prefix LOOPBACK1V6 index 10 permit 2001::2 128
+ip ipv6-prefix LOOPBACK1V6 index 20 permit 2001::28 128
+ip ipv6-prefix LOOPBACK100V6 index 10 permit 2001::1 128
+ip ipv6-prefix LOOPBACK100V6 index 20 permit 2001::3 128
+ip ipv6-prefix LOOPBACK100V6 index 30 permit 2001::4 128
+#
+user-interface con 0
+user-interface vty 0 4
+user-interface vty 16 20
+#
+return
+[R3]
+<R4>display current-configuration 
+#
+sysname R4
+#
+ipv6
+#
+vlan batch 100 300 400
+#
+ip vpn-instance CompanyA
+ ipv4-family
+  route-distinguisher 100:31
+  vpn-target 100:31 export-extcommunity
+  vpn-target 100:31 import-extcommunity
+ ipv6-family
+  route-distinguisher 100:31
+  vpn-target 100:31 export-extcommunity
+  vpn-target 100:31 import-extcommunity
+#
+ip vpn-instance vpnv6
+ ipv6-family
+  route-distinguisher 100:1
+  vpn-target 100:1 export-extcommunity
+  vpn-target 100:1 import-extcommunity
+#
+mpls lsr-id 1.1.1.4
+mpls
+#
+mpls ldp
+#
+#
+aaa
+ authentication-scheme default
+ authorization-scheme default
+ accounting-scheme default
+ domain default
+ domain default_admin
+ local-user admin password cipher M-T$US_Fu-939O4.`(ZGbRC#
+ local-user admin service-type http
+#
+isis 1
+ is-level level-2
+ cost-style wide
+ network-entity 49.0001.0010.0100.1004.00
+ is-name R4
+ import-route isis 100 route-policy ISIS-100-TO-1
+ #
+ ipv6 enable topology standard
+ ipv6 import-route isis 100 route-policy ISISV6-100-TO-1
+ #
+#
+isis 100
+ is-level level-2
+ cost-style wide
+ network-entity 49.0100.0010.0100.1004.00
+ is-name R4
+ import-route isis 1 route-policy ISIS-1-TO-100
+ #
+ ipv6 enable topology standard
+ ipv6 import-route isis 1 route-policy ISISV6-1-TO-100
+ #
+#
+firewall zone Local
+ priority 16
+#
+interface Ethernet0/0/0
+#
+interface Ethernet0/0/0.100
+ dot1q termination vid 100
+ ip binding vpn-instance CompanyA
+ ipv6 enable
+ ip address 10.40.15.2 255.255.255.252
+ ipv6 address 2001:40:15::2/126
+#
+interface Ethernet0/0/0.300
+ dot1q termination vid 300
+ ip address 100.40.15.2 255.255.255.252
+#
+interface Ethernet0/0/0.400
+ dot1q termination vid 400
+ ipv6 enable
+ ipv6 address 2002:40:15::2/126
+#
+interface Ethernet0/0/1
+#
+interface Serial0/0/0
+ link-protocol ppp
+#
+interface Serial0/0/1
+ link-protocol ppp
+#
+interface Serial0/0/2
+ link-protocol ppp
+#
+interface Serial0/0/3
+ link-protocol ppp
+#
+interface Global-Mp-Group0
+
+#
+interface GigabitEthernet0/0/0.100
+ dot1q termination vid 100
+ ip binding vpn-instance CompanyA
+ ipv6 enable
+ ip address 10.40.14.2 255.255.255.252
+ ipv6 address 2001:40:14::2/126
+#
+interface GigabitEthernet0/0/0.300
+ dot1q termination vid 300
+ ip address 100.40.14.2 255.255.255.252
+#
+interface GigabitEthernet0/0/0.400
+ dot1q termination vid 400
+ ipv6 enable
+ ipv6 address 2002:40:14::2/126
+#
+interface GigabitEthernet0/0/1
+ ipv6 enable
+ ip address 100.40.28.1 255.255.255.252
+ ipv6 address 2001:40:28::1/126
+ isis enable 1
+ isis ipv6 enable 1
+ isis circuit-level level-2
+ isis authentication-mode md5 >NN*>GN<O)CKU<N\4&2SeVD#
+ isis cost 100
+#
+interface GigabitEthernet0/0/2
+ ipv6 enable
+ ip address 100.10.4.2 255.255.255.252
+ ipv6 address 2001:10:4::2/126
+ isis enable 100
+ isis ipv6 enable 100
+ isis circuit-level level-2
+ isis authentication-mode md5 Yx.LD~{JU6CKU<N\4&2S>u+#
+ isis cost 10
+ mpls
+ mpls ldp
+#
+interface GigabitEthernet0/0/3
+#
+interface GigabitEthernet0/0/3.1
+ dot1q termination vid 1
+ ipv6 enable
+ ip address 100.30.4.2 255.255.255.252
+ ipv6 address 2001:30:4::2/126
+ isis enable 1
+ isis ipv6 enable 1
+ isis authentication-mode md5 tx+0C>-yT,A/!-@.Vp7.{W$#
+ isis cost 2000
+#
+interface GigabitEthernet0/0/3.100
+ dot1q termination vid 100
+ ipv6 enable
+ ip address 100.40.3.2 255.255.255.252
+ ipv6 address 2001:40:3::2/126
+ isis enable 100
+ isis ipv6 enable 100
+ isis authentication-mode md5 zwA=FOb!"<V{0,NJ*6g6AW@#
+ isis cost 10
+#
+wlan
+#
+interface NULL0
+#
+interface Logic-Channel0
+#
+interface LoopBack0
+ ipv6 enable
+ ip address 1.1.1.4 255.255.255.255
+ ipv6 address 2001::4/128
+ isis enable 100
+ isis ipv6 enable 100
+#
+bgp 100.1
+ router-id 1.1.1.4
+ peer 1.1.1.1 as-number 100.1
+ peer 1.1.1.1 connect-interface LoopBack0
+ peer 1.1.1.2 as-number 100.1
+ peer 1.1.1.2 connect-interface LoopBack0
+ peer 1.1.1.3 as-number 100.1
+ peer 1.1.1.3 connect-interface LoopBack0
+ peer 1.1.1.28 as-number 100.1
+ peer 1.1.1.28 connect-interface LoopBack0
+ peer 100.40.14.1 as-number 100.1
+ peer 100.40.15.1 as-number 100.1
+ peer 2001::1 as-number 100.1
+ peer 2001::1 connect-interface LoopBack0
+ peer 2001::2 as-number 100.1
+ peer 2001::2 connect-interface LoopBack0
+ peer 2002:40:14::1 as-number 65100
+ peer 2002:40:15::1 as-number 65100
+ group vpnv6 internal
+ peer 2001::3 as-number 100.1
+ peer 2001::3 group vpnv6
+ peer 2001::3 connect-interface LoopBack0
+ peer 2001::28 as-number 100.1
+ peer 2001::28 group vpnv6
+ peer 2001::28 connect-interface LoopBack0
+ #
+ ipv4-family unicast
+  undo synchronization
+  reflector cluster-id 1.1.1.4
+  network 10.0.0.0
+  network 10.40.14.0 255.255.255.252
+  network 10.40.15.0 255.255.255.252
+  network 100.0.0.0
+  network 100.10.4.0 255.255.255.252
+  network 100.30.4.0 255.255.255.252
+  network 100.40.3.0 255.255.255.252
+  network 100.40.14.0 255.255.255.252
+  network 100.40.15.0 255.255.255.252
+  network 100.40.28.0 255.255.255.252
+  peer 1.1.1.1 enable
+  peer 1.1.1.1 reflect-client
+  peer 1.1.1.2 enable
+  peer 1.1.1.2 route-policy ONLY-SUMMARY-IPV4 import
+  peer 1.1.1.2 reflect-client
+  peer 1.1.1.3 enable
+  peer 1.1.1.3 reflect-client
+  peer 1.1.1.28 enable
+  peer 1.1.1.28 reflect-client
+  peer 100.40.14.1 enable
+  peer 100.40.15.1 enable
+  peer vpnv6 enable
+ #
+ ipv6-family unicast
+  undo synchronization
+  network 2001:10:4:: 126
+  network 2001:30:4:: 126
+  network 2001:40:3:: 126
+  network 2001:40:28:: 126
+  peer 2001::1 enable
+  peer 2001::1 reflect-client
+  peer 2001::2 enable
+  peer 2001::2 route-policy ONLY-SUMMARY-IPV6 import
+  peer 2001::2 reflect-client
+  peer 2001::3 enable
+  peer 2001::3 reflect-client
+  peer 2001::28 enable
+  peer 2001::28 reflect-client
+  peer 2002:40:14::1 enable
+  peer 2002:40:15::1 enable
+ #
+ ipv4-family vpnv4
+  policy vpn-target
+  peer 1.1.1.1 enable
+  peer 1.1.1.1 reflect-client
+  peer 1.1.1.2 enable
+  peer 1.1.1.2 reflect-client
+  peer 1.1.1.3 enable
+  peer 1.1.1.3 reflect-client
+  peer 1.1.1.28 enable
+ #
+ ipv4-family vpn-instance CompanyA
+  peer 10.40.14.1 as-number 65100
+  peer 10.40.15.1 as-number 65100
+ #
+ ipv6-family vpnv6
+  policy vpn-target
+  peer 1.1.1.3 enable
+  peer 1.1.1.28 enable
+ #
+ ipv6-family vpn-instance CompanyA
+  peer 2001:40:14::1 as-number 65100
+  peer 2001:40:15::1 as-number 65100
+#
+route-policy ISIS-1-TO-100 permit node 10
+ if-match ip-prefix LOOPBACK1V4
+ apply tag 1
+#
+route-policy ISIS-1-TO-100 deny node 20
+#
+route-policy ISIS-100-TO-1 deny node 5
+ if-match tag 1
+#
+route-policy ISIS-100-TO-1 permit node 10
+ if-match ip-prefix LOOPBACK100V4
+ apply tag 100
+#
+route-policy ISISV6-1-TO-100 permit node 10
+ if-match ipv6 address prefix-list LOOPBACK1V6
+ apply tag 1
+#
+route-policy ISISV6-1-TO-100 deny node 20
+#
+route-policy ISISV6-100-TO-1 deny node 5
+ if-match tag 1
+#
+route-policy ISISV6-100-TO-1 permit node 10
+ if-match ipv6 address prefix-list LOOPBACK100V6
+ apply tag 100
+#
+route-policy ISISV6-100-TO-1 deny node 20
+#
+route-policy ONLY-SUMMARY-IPV4 permit node 10
+ if-match community-filter ONLY-SUMMARY-IPV4
+#
+route-policy ONLY-SUMMARY-IPV6 permit node 10
+ if-match community-filter ONLY-SUMMARY-IPV6
+#
+ip ip-prefix LOOPBACK1V4 index 10 permit 1.1.1.2 32
+ip ip-prefix LOOPBACK1V4 index 20 permit 1.1.1.28 32
+ip ip-prefix LOOPBACK100V4 index 10 permit 1.1.1.1 32
+ip ip-prefix LOOPBACK100V4 index 20 permit 1.1.1.3 32
+ip ip-prefix LOOPBACK100V4 index 30 permit 1.1.1.4 32
+#
+ip community-filter basic ONLY-SUMMARY-IPV4 permit 100:5
+ip community-filter basic ONLY-SUMMARY-IPV6 permit 100:7
+#
+ip ipv6-prefix LOOPBACK1V6 index 10 permit 2001::2 128
+ip ipv6-prefix LOOPBACK1V6 index 20 permit 2001::28 128
+ip ipv6-prefix LOOPBACK100V6 index 10 permit 2001::1 128
+ip ipv6-prefix LOOPBACK100V6 index 20 permit 2001::3 128
+ip ipv6-prefix LOOPBACK100V6 index 30 permit 2001::4 128
+#
+user-interface con 0
+user-interface vty 0 4
+user-interface vty 16 20
+#
+return
